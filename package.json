@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "dev": "nodemon app.js"
   },
   "author": "abdelrhman adel",
   "license": "ISC",
@@ -23,6 +24,5 @@
     "pug": "^3.0.0",
     "request": "^2.88.2",
     "socket.io": "^3.0.3"
-    
   }
 }
