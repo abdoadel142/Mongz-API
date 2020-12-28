@@ -1,7 +1,7 @@
 const mongoose =require('mongoose');
 const Schema = mongoose.Schema;
 
-const harmaciesSchema= new Schema({
+const pharmaciesSchema= new Schema({
     name:{
         type: String,
         required: true,
