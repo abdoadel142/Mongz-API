@@ -85,8 +85,6 @@ exports.login = (req, res, next) => {
         });
 };
 
-<<<<<<< Updated upstream
-=======
 /////////
 
 exports.adminLogin = (req, res, next) => {
@@ -170,4 +168,3 @@ exports.adminSignup = (req, res, next) => {
         });
 
 };
->>>>>>> Stashed changes
