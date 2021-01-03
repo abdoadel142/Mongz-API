@@ -9,4 +9,10 @@ const router = express.Router();
 router.post("/addProduct", adminController.addProduct);
 router.get("/getProducts", adminController.getProducts);
 
+router.get('/restaurants/:restaurantId', adminController.getRestaurant);
+
+router.put('/restaurants/:restaurantId', adminController.updateRestaurant);
+
+router.delete("/restaurants/:restaurantId", adminController.deleteRestaurants);
+
 module.exports = router;
