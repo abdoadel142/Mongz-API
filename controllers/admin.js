@@ -5,7 +5,6 @@ const Product = require("../models/post");
 const Menu = require("../models/menu");
 
 exports.addProduct = async (req, res, next) => {
-  // id = req.body.id;
   const type = req.body.type;
   const name = req.body.name;
   const description = req.body.description;
@@ -15,7 +14,6 @@ exports.addProduct = async (req, res, next) => {
   const address = req.body.address;
   const openingHour = req.body.openingHour;
   const closingHour = req.body.closingHour;
-  // menuId = req.body.menuId;
   const rate = req.body.rate;
   const openingHours = openingHour + " - " + closingHour;
 
@@ -28,7 +26,6 @@ exports.addProduct = async (req, res, next) => {
       imageUrl: imageUrl,
       address: address,
       openingHours: openingHours,
-      // menuId: menuId,
       rate: rate,
     });
     await restaurant.save();
@@ -182,17 +179,11 @@ exports.addMenu = async (req, res, next) => {
   const description = req.body.description;
   const price = req.body.price;
   const type = req.body.type;
+  const restaurant = await Restaurants.findById(restaurantId);
 
-  // console.log(req.user);
-  
-  console.log(restaurantId);
-  console.log(restaurantName);
-  console.log(name);
   const menu = new Menu({
-    restaurant: {
-      name: restaurantName,
-      id: restaurantId,
-    },
+    _id: restaurant,
+    restaurantName: restaurantName,
     items: [
       {
         name: name,
@@ -204,4 +195,51 @@ exports.addMenu = async (req, res, next) => {
   });
   await menu.save();
   res.status(200).json({ message: type + "created", menuId: menu._id });
+};
+
+exports.addMenuItems = async (req, res, next) => {
+  const restaurantId = req.body.restaurantId;
+  const restaurantName = req.body.restaurantName;
+  const name = req.body.name;
+  const description = req.body.description;
+  const price = req.body.price;
+  const type = req.body.type;
+
+  try {
+    const restaurant = await Restaurants.findById(restaurantId);
+    const menu = await Menu.findById(restaurantId);
+    if (!menu) {
+      const menu = new Menu({
+        _id: restaurant,
+        restaurantName: restaurantName,
+        items: [
+          {
+            name: name,
+            description: description,
+            price: price,
+            type: type,
+          },
+        ],
+      });
+      await menu.save();
+      res.status(200).json({ message: type + "created", menuId: menu._id });
+    } else {
+      console.log(menu.items.length);
+      menu.restaurantName = req.body.restaurantName;
+      menu.items[menu.items.length] = {
+        name: name,
+        description: description,
+        price: price,
+        type: type,
+      };
+
+      const result = await menu.save();
+      res.status(200).json({ message: "Menu updated!", menu: result });
+    }
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };

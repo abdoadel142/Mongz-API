@@ -16,4 +16,6 @@ router.put("/restaurants/:restaurantId", adminController.updateRestaurant);
 router.delete("/restaurants/:restaurantId", adminController.deleteRestaurants);
 router.post("/addMenu", adminController.addMenu);
 
+router.put("/addMenu", adminController.addMenuItems);
+
 module.exports = router;
