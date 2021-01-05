@@ -2,6 +2,7 @@ const Restaurants = require("../models/restaurants");
 const Pharmacies = require("../models/pharmacies");
 const Groceries = require("../models/groceries");
 const Product = require("../models/post");
+const Menu = require("../models/menu");
 
 exports.addProduct = async (req, res, next) => {
   // id = req.body.id;
@@ -172,4 +173,35 @@ exports.updateRestaurant = async (req, res, next) => {
     }
     next(err);
   }
+};
+
+exports.addMenu = async (req, res, next) => {
+  const restaurantId = req.body.restaurantId;
+  const restaurantName = req.body.restaurantName;
+  const name = req.body.name;
+  const description = req.body.description;
+  const price = req.body.price;
+  const type = req.body.type;
+
+  // console.log(req.user);
+  
+  console.log(restaurantId);
+  console.log(restaurantName);
+  console.log(name);
+  const menu = new Menu({
+    restaurant: {
+      name: restaurantName,
+      id: restaurantId,
+    },
+    items: [
+      {
+        name: name,
+        description: description,
+        price: price,
+        type: type,
+      },
+    ],
+  });
+  await menu.save();
+  res.status(200).json({ message: type + "created", menuId: menu._id });
 };
