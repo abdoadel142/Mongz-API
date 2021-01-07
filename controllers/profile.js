@@ -1,12 +1,5 @@
 const User = require('../models/user');
-exports.getk =async (req, res, next)=>{
-    const users = await User.find();
-    console.log("Fetched User Data successfully.");
-    res.status(200).json({
-        message: 'Fetched User Data successfully.',
-        users: users,
-    });
-};
+
 
 exports.getProfile = async (req, res, next) => {
     try {
@@ -31,3 +24,13 @@ exports.getProfile = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.setProfile = async (req, res, next)=>{
+const userId = req.params.userId;
+await User.findById(userId);
+
+
+};
+
+
+

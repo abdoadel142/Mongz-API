@@ -8,7 +8,6 @@ const UserAdmin = require('../models/adminUser');
 
 exports.signup = (req, res, next) => {
     const errors = validationResult(req);
-    console.log("kkkkkk");
     if (!errors.isEmpty()) {
         const error = new Error('validation Failed');
         error.statusCode = 422;
@@ -16,7 +15,7 @@ exports.signup = (req, res, next) => {
         throw error;
     }
     const email = req.body.email;
-    //const name = req.body.name;
+    const name = req.body.name;
     const password = req.body.password;
     console.log(email);
     bcrypt.hash(password, 12)
@@ -24,7 +23,7 @@ exports.signup = (req, res, next) => {
             const user = new User({
                 email: email,
                 password: hashedPw,
-               // name: name
+                name: name
             });
             return user.save();
 
@@ -138,8 +137,8 @@ exports.adminLogin = (req, res, next) => {
 ////
 
 exports.adminSignup = (req, res, next) => {
+    console.log('hhhh');
     const errors = validationResult(req);
- console.log('hhhh');
     if (!errors.isEmpty()) {
         const error = new Error('validation Failed');
         error.statusCode = 422;
