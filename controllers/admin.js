@@ -10,7 +10,7 @@ exports.addProduct = async (req, res, next) => {
   const description = req.body.description;
   const latitude = req.body.latitude;
   const longitude = req.body.longitude;
-  const imageUrl = req.body.imageUrl;
+  const imageUrl = req.file.path;
   const address = req.body.address;
   const openingHour = req.body.openingHour;
   const closingHour = req.body.closingHour;
@@ -110,6 +110,45 @@ exports.deleteRestaurants = async (req, res, next) => {
   }
 };
 
+exports.deletePharmacies = async (req, res, next) => {
+  const pharmacieId = req.params.pharmacieId;
+  console.log(pharmacieId);
+  try {
+    const pharmacie = await Pharmacies.findById(pharmacieId);
+    if (!pharmacie) {
+      const error = new Error("Could not find Restaurant.");
+      error.statusCode = 404;
+      throw error;
+    }
+    await Pharmacies.findByIdAndRemove(pharmacieId);
+    res.status(200).json({ message: "Deleted pharmacie." });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+exports.deleteGroceries = async (req, res, next) => {
+  const grocerieId = req.params.grocerieId;
+  console.log(grocerieId);
+  try {
+    const grocerie = await Groceries.findById(grocerieId);
+    if (!grocerie) {
+      const error = new Error("Could not find Grocerie.");
+      error.statusCode = 404;
+      throw error;
+    }
+    await Groceries.findByIdAndRemove(grocerieId);
+    res.status(200).json({ message: "Deleted Grocerie." });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 exports.getRestaurant = async (req, res, next) => {
   const restaurantId = req.params.restaurantId;
   const restaurant = await Restaurants.findById(restaurantId);
@@ -129,10 +168,45 @@ exports.getRestaurant = async (req, res, next) => {
     next(err);
   }
 };
+exports.getPharmacie = async (req, res, next) => {
+  const pharmacieId = req.params.pharmacieId;
+  const pharmacie = await Pharmacies.findById(pharmacieId);
+  try {
+    if (!pharmacie) {
+      const error = new Error("Could not find pharmacie.");
+      error.statusCode = 404;
+      throw error;
+    }
+    res
+      .status(200)
+      .json({ message: "pharmacie fetched.", pharmacie: pharmacie });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+exports.getGrocerie = async (req, res, next) => {
+  const grocerieId = req.params.grocerieId;
+  const grocerie = await Groceries.findById(grocerieId);
+  try {
+    if (!grocerie) {
+      const error = new Error("Could not find pharmacie.");
+      error.statusCode = 404;
+      throw error;
+    }
+    res.status(200).json({ message: "Grocerie fetched.", grocerie: grocerie });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
 
 exports.updateRestaurant = async (req, res, next) => {
   const restaurantId = req.params.restaurantId;
-
   const name = req.body.name;
   const description = req.body.description;
   const latitude = req.body.latitude;
@@ -171,7 +245,6 @@ exports.updateRestaurant = async (req, res, next) => {
     next(err);
   }
 };
-
 exports.addMenu = async (req, res, next) => {
   const restaurantId = req.body.restaurantId;
   const restaurantName = req.body.restaurantName;
@@ -242,4 +315,105 @@ exports.addMenuItems = async (req, res, next) => {
     }
     next(err);
   }
+};
+
+exports.getRestaurants = async (req, res, next) => {
+  const restaurant = await Restaurants.find();
+  try {
+    if (!restaurant) {
+      const error = new Error("Could not find Restaurant.");
+      error.statusCode = 404;
+      throw error;
+    }
+    res
+      .status(200)
+      .json({ message: "Restaurant fetched.", restaurant: restaurant });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getMenu = async (req, res, nex) => {
+  const menuId = req.params.menuId;
+  const menu = await Menu.findById(menuId);
+
+  try {
+    if (!menu) {
+      const error = new Error("Could not find Menu.");
+      error.statusCode = 404;
+      throw error;
+    }
+    res.status(200).json({ message: "Menu fetched.", menu: menu });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getCart = async (req, res, next) => {
+  const userId = req.params.userId;
+  const userData = await user.findById(userId);
+  const items = [];
+  const quantities = [];
+  const data = await userData.cart.items;
+  if (userData) {
+    for (const i of userData.cart.items) {
+      const menuId = i.menuId;
+      const menuItem = i.itemId;
+      const quantity = i.quantity;
+      const menu = await Menu.findById(menuId).find({ "items._id": menuItem });
+      items.push(menu);
+      quantities.push(quantity);
+    }
+
+    res
+      .status(200)
+      .json({ message: "fetched", items: items, quantities: quantities });
+  }
+};
+
+exports.reomveFromCart = async (req, res, next) => {
+  const userId = req.params.userId;
+  const itemId = req.params.itemId;
+  const users = await user.findById(userId);
+  users.reomveFromCart(itemId);
+  res.status(200).json({ message: "successfully" });
+};
+
+exports.reomveCart = async (req, res, next) => {
+  const userId = req.params.userId;
+  const itemId = req.params.itemId;
+  console.log("gggggggggggggggggggggggggggggggggggg");
+  const users = await user.findById(userId);
+  await users.clearCart();
+  res.status(200).json({ message: "successfully" });
+};
+
+exports.addCart = async (req, res, next) => {
+  const userId = req.body.userId;
+  const menuId = req.body.menuId;
+  const itemId = req.body.itemId;
+
+  const users = await user.findById(userId);
+  if (users) {
+    const menu = await Menu.findById(menuId);
+    if (menu) {
+      //   const item = await menu.items.findById(itemId);
+
+      // console.log(item.name);
+
+      users.addToCart(itemId, menuId);
+      console.log(users._id);
+
+      res.status(200).json({ message: "created", menuId: menu._id });
+    } else {
+      Error = "not valid type ";
+    }
+  }
+  console.log("dddddddd");
 };

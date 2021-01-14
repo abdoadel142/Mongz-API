@@ -11,12 +11,6 @@ const menuSchema = new Schema(
       type: String,
       required: true,
     },
-    // id: {
-    //   type: Schema.Types.ObjectId,
-    //   required: true,
-    //   ref: "Restaurant",
-    // },
-
     items: [
       {
         name: {

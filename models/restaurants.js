@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const menu = require("./menu");
 const Schema = mongoose.Schema;
 
 const restaurantsSchema = new Schema({
@@ -18,9 +17,9 @@ const restaurantsSchema = new Schema({
     },
   ],
   imageUrl: {
-    type: String,
-    required: true,
-  },
+    required:true,
+    type: String
+    },
   address: {
     type: String,
     required: true,
@@ -29,29 +28,14 @@ const restaurantsSchema = new Schema({
     type: String,
     required: true,
   },
-  menu: {
-    items: [
-      {
-        menuId: {
-          type: Schema.Types.ObjectId,
-          ref: "Menu",
-          // required: true
-        },
-      },
-    ],
+  menuId: {
+    type: Schema.Types.ObjectId,
+    ref: "Menu",
+    // required: true,
   },
-  // menuId: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: "Menu",
-  //   // required: true,
-  // },
   rate: {
     type: Number,
   },
 });
-
-restaurantsSchema.methods.addMenu = function (product) {
-
-};
 
 module.exports = mongoose.model("Restaurants", restaurantsSchema);

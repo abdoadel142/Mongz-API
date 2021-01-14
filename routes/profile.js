@@ -9,5 +9,6 @@ const profileController = require('../controllers/profile');
 const router = express.Router();
 
 router.get('/getData', isAuth, profileController.getProfile);
+router.get('/getAdminData', isAuth, profileController.getAdminData);
 
 module.exports = router;
